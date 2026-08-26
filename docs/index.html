@@ -1,0 +1,1068 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="PhysWave: Physics-Guided Spatial Audio Generation with Controllable Latent Diffusion Models">
+  <meta name="keywords" content="PhysWave, spatial audio generation, FOA, latent diffusion models, physics-guided audio">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <title>PhysWave: Physics-Guided Spatial Audio Generation with Controllable Latent Diffusion Models</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #ffffff;
+      --panel: #ffffff;
+      --ink: #222222;
+      --muted: #5f6368;
+      --line: #e5e7eb;
+      --soft: #f7f7f7;
+      --axis-x: #315f86;
+      --axis-y: #2d7965;
+      --axis-z: #8a5c9f;
+      --source: #d0772e;
+      --start: #2f7a63;
+      --end: #b66a2f;
+      --shadow: 0 4px 18px rgba(20, 25, 35, 0.07);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Noto Sans", Arial, ui-sans-serif, system-ui, sans-serif;
+      line-height: 1.6;
+    }
+
+    .hero {
+      text-align: center;
+    }
+
+    .hero .hero-body {
+      padding: 3rem 1.5rem;
+    }
+
+    .publication-venue {
+      width: fit-content;
+      margin: 18px auto 0;
+      color: #555555;
+      font-family: "Google Sans", "Noto Sans", sans-serif;
+      font-weight: 700;
+    }
+
+    .publication-authors {
+      margin: 9px 0 0;
+      color: #363636;
+      font-family: "Google Sans", "Noto Sans", sans-serif;
+      font-weight: 400;
+    }
+
+    .author-row + .author-row {
+      margin-top: 3px;
+    }
+
+    .author-block {
+      display: inline-block;
+      white-space: nowrap;
+    }
+
+    .publication-authors .author-name {
+      color: hsl(204, 86%, 53%);
+    }
+
+    .publication-authors .author-name:hover {
+      text-decoration: underline;
+    }
+
+    .affiliation-row {
+      margin-top: 8px;
+    }
+
+    .title.is-1.publication-title {
+      margin: 0 auto;
+      max-width: 1120px;
+      font-family: "Google Sans", "Noto Sans", Arial, ui-sans-serif, system-ui, sans-serif;
+      font-size: 2.2rem;
+      line-height: 1.125;
+      font-weight: 600;
+      letter-spacing: normal;
+    }
+
+    .project-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .publication-links .resource-button {
+      display: inline-flex;
+      align-items: center;
+      min-height: 42px;
+      margin: 5px 3px;
+      padding-inline: 18px;
+      font-family: "Google Sans", "Noto Sans", sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, .12);
+      user-select: none;
+    }
+
+    .publication-links .resource-button:hover,
+    .publication-links .resource-button:focus {
+      background-color: #363636;
+      color: #ffffff;
+    }
+
+    .publication-links .resource-placeholder {
+      cursor: default;
+    }
+
+    .abstract {
+      width: min(900px, 100%);
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .abstract h2 {
+      margin: 0 0 12px;
+      font-family: "Inter", "Noto Sans", sans-serif;
+      font-size: 30px;
+      font-weight: 700;
+    }
+
+    .abstract p {
+      margin: 0;
+      color: #2c333b;
+      font-size: 16px;
+      text-align: justify;
+      line-height: 1.75;
+    }
+
+    .framework-figure {
+      margin: 0;
+      text-align: center;
+    }
+
+    .framework-image {
+      display: block;
+      width: 75%;
+      height: auto;
+      margin: 0 auto;
+      border-radius: 5px;
+    }
+
+    .framework-caption {
+      width: min(1040px, 75%);
+      margin: 18px auto 0;
+      color: #363636;
+      font-size: 15px;
+      line-height: 1.65;
+      text-align: justify;
+    }
+
+    .examples {
+      padding-top: 0;
+    }
+
+    .comparison {
+      margin-top: 28px;
+      padding-top: 48px;
+      border-top: 1px solid #eeeeee;
+    }
+
+    .section-head {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    h2 {
+      margin: 0 0 8px;
+      font-family: "Inter", "Noto Sans", sans-serif;
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .section-head p {
+      margin: 0;
+      max-width: 860px;
+      margin-inline: auto;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    .event-row {
+      padding: 24px 0 30px;
+      border-top: 1px solid var(--line);
+    }
+
+    .event-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+
+    .event-head h3 {
+      margin: 0;
+      font-family: "Inter", "Noto Sans", sans-serif;
+      font-size: 20px;
+      font-weight: 760;
+      letter-spacing: 0;
+    }
+
+    .event-head p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: right;
+    }
+
+    .canvas-legend {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 4px 8px;
+      background: rgba(255, 255, 255, .84);
+      border: 1px solid rgba(210, 218, 225, .9);
+      border-radius: 999px;
+      color: #45515c;
+      font-size: 11px;
+      font-weight: 760;
+      pointer-events: none;
+    }
+
+    .canvas-legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+    }
+
+    .listener-mark {
+      display: inline-grid;
+      place-items: center;
+      width: 14px;
+      height: 14px;
+      color: #fff;
+      background: #171a1f;
+      border-radius: 50%;
+      font-size: 9px;
+      font-weight: 850;
+      line-height: 1;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--source);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .sample-card {
+      min-width: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+
+    .sample-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 9px 26px rgba(20, 25, 35, .10);
+    }
+
+    .canvas-wrap {
+      position: relative;
+      background:
+        radial-gradient(circle at 50% 24%, rgba(255, 255, 255, .95), rgba(241, 245, 247, .74) 58%, rgba(232, 237, 241, .92)),
+        linear-gradient(180deg, #f8fafb, #eef2f4);
+      border-bottom: 1px solid var(--line);
+    }
+
+    canvas.trajectory {
+      display: block;
+      width: 100%;
+      aspect-ratio: 640 / 430;
+    }
+
+    .time-badge {
+      position: absolute;
+      right: 12px;
+      bottom: 10px;
+      padding: 3px 8px;
+      color: #36414c;
+      background: rgba(255, 255, 255, .82);
+      border: 1px solid rgba(210, 218, 225, .9);
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      pointer-events: none;
+    }
+
+    .sample-body {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      padding: 15px 16px 16px;
+    }
+
+    .sample-kicker {
+      margin: 0 0 9px;
+      color: var(--axis-x);
+      font-size: 12px;
+      font-weight: 830;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .prompt {
+      height: 72px;
+      overflow: auto;
+      margin: 0 0 8px;
+      color: #20262d;
+      font-size: 14px;
+    }
+
+    .waypoint-panel {
+      height: 174px;
+      margin: 0 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fbfcfd;
+      overflow: hidden;
+    }
+
+    .waypoint-title {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 7px 9px;
+      border-bottom: 1px solid var(--line);
+      color: #2e3944;
+      font-size: 11px;
+      font-weight: 820;
+    }
+
+    .waypoint-title span {
+      color: var(--muted);
+      font-weight: 680;
+      white-space: nowrap;
+    }
+
+    .waypoint-scroll {
+      height: 139px;
+      overflow: auto;
+    }
+
+    .waypoint-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .waypoint-table th,
+    .waypoint-table td {
+      padding: 4px 6px;
+      text-align: right;
+      border-bottom: 1px solid rgba(221, 227, 232, .75);
+      white-space: nowrap;
+    }
+
+    .waypoint-table th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      color: #53606c;
+      background: #f2f5f7;
+      font-weight: 780;
+    }
+
+    .waypoint-table td:first-child,
+    .waypoint-table th:first-child {
+      text-align: left;
+    }
+
+    .player-row {
+      display: grid;
+      gap: 7px;
+      margin-top: auto;
+    }
+
+    .player-row span {
+      color: #3b4650;
+      font-weight: 780;
+      font-size: 12px;
+    }
+
+    .player-row em {
+      color: var(--muted);
+      font-style: normal;
+      font-weight: 650;
+    }
+
+    audio {
+      width: 100%;
+      height: 36px;
+    }
+
+    .baseline-row {
+      padding: 18px 0 24px;
+      border-top: 1px solid var(--line);
+    }
+
+    .baseline-row:first-child {
+      border-top: 0;
+    }
+
+    .baseline-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 16px;
+      align-items: end;
+      margin-bottom: 12px;
+    }
+
+    .baseline-head h3 {
+      margin: 0 0 3px;
+      font-size: 18px;
+      font-weight: 760;
+      letter-spacing: 0;
+    }
+
+    .baseline-head p {
+      margin: 0;
+      color: #2f3842;
+      font-size: 13px;
+    }
+
+    .baseline-head span {
+      color: var(--muted);
+      font-size: 12px;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .baseline-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .baseline-card {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 14px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .baseline-card.is-physwave {
+      border-color: #d29a21;
+      border-width: 2px;
+      background: linear-gradient(180deg, #fffaf0, #ffffff 44%);
+      box-shadow: 0 14px 38px rgba(171, 119, 18, .16);
+    }
+
+    .baseline-card.is-physwave h4 {
+      color: #9a690e;
+    }
+
+    .baseline-card h4 {
+      margin: 0;
+      color: var(--axis-x);
+      font-size: 13px;
+      font-weight: 820;
+    }
+
+
+    footer {
+      border-top: 1px solid #eeeeee;
+      background: #fafafa;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    @media (max-width: 1180px) {
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 860px) {
+      .baseline-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 700px) {
+      .hero .hero-body { padding: 42px 18px 34px; }
+      .title.is-1.publication-title { font-size: 1.8rem; }
+      .publication-venue { margin-top: 16px; }
+      .framework-image { width: 100%; }
+      .framework-caption { width: 100%; text-align: left; }
+      .project-links { gap: 8px; margin-top: 20px; }
+      .publication-links .resource-button { padding-inline: 14px; font-size: 14px; }
+      .abstract h2, h2 { font-size: 26px; }
+      .event-head { display: block; }
+      .event-head p { margin-top: 4px; text-align: left; }
+      .grid { grid-template-columns: 1fr; }
+      .baseline-head { display: block; }
+      .baseline-head span { display: block; margin-top: 4px; text-align: left; }
+      .baseline-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <section class="hero publication-header">
+    <div class="hero-body">
+      <div class="container is-max-widescreen">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">PhysWave: Physics-Guided Spatial Audio Generation<br>with Controllable Latent Diffusion Models</h1>
+            <h3 class="title is-4 publication-venue">EMNLP 2026</h3>
+            <div class="is-size-5 publication-authors" aria-label="Authors">
+              <div class="author-row">
+                <span class="author-block"><span class="author-name">Lingfeng Yao</span><sup>1</sup>,</span>
+                <span class="author-block"><span class="author-name">Chenpei Huang</span><sup>1</sup>,</span>
+                <span class="author-block"><span class="author-name">Xingke Yang</span><sup>1</sup>,</span>
+                <span class="author-block"><span class="author-name">Ziye Geng</span><sup>1</sup></span>
+              </div>
+              <div class="author-row">
+                <span class="author-block"><span class="author-name">Changqing Luo</span><sup>1</sup>,</span>
+                <span class="author-block"><span class="author-name">Hao Wang</span><sup>2</sup>,</span>
+                <span class="author-block"><span class="author-name">Jiang Liu</span><sup>3</sup>,</span>
+                <span class="author-block"><span class="author-name">Miao Pan</span><sup>1</sup></span>
+              </div>
+            </div>
+            <div class="is-size-5 publication-authors affiliation-row" aria-label="Affiliations">
+              <span class="author-block"><sup>1</sup>University of Houston,</span>
+              <span class="author-block"><sup>2</sup>Stevens Institute of Technology,</span>
+              <span class="author-block"><sup>3</sup>Waseda University</span>
+            </div>
+            <div class="publication-links" aria-label="Project resources">
+              <span class="link-block">
+                <span class="external-link button is-normal is-rounded is-dark resource-button resource-placeholder" aria-disabled="true" title="Paper coming soon">
+                  <span class="icon"><i class="fas fa-file-pdf" aria-hidden="true"></i></span>
+                  <span>Paper</span>
+                </span>
+              </span>
+              <span class="link-block">
+                <a href="https://github.com/lingfengyao/PhysWave" target="_blank" rel="noopener noreferrer" class="external-link button is-normal is-rounded is-dark resource-button" title="View PhysWave code on GitHub">
+                  <span class="icon"><i class="fab fa-github" aria-hidden="true"></i></span>
+                  <span>Code</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <span class="external-link button is-normal is-rounded is-dark resource-button resource-placeholder" aria-disabled="true" title="Data coming soon">
+                  <span class="icon"><i class="far fa-images" aria-hidden="true"></i></span>
+                  <span>Data</span>
+                </span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths abstract" aria-labelledby="abstract-title">
+          <h2 id="abstract-title" class="title is-3">Abstract</h2>
+          <div class="content has-text-justified">
+            <p>Text-to-spatial audio generation, such as text-to-First-Order Ambisonics (FOA), provides a convenient way to create spatial audio for billion-dollar gaming and film industries. However, existing text-to-FOA methods are largely data-driven and may produce audio that violates acoustic relations between source direction and distance. They also separate descriptive and parametric control, forcing users to trade usability for precision. In this paper, we present PhysWave, a physics-guided latent diffusion model for controllable text-to-FOA generation. PhysWave unifies natural-language and trajectory control through a shared waypoint-caption representation, and augments diffusion training with two differentiable acoustic priors: spherical-harmonic direction consistency and inverse-square distance consistency. To support dynamic spatial generation, we further construct a 300K-clip FOA dataset with diverse sound categories and source trajectories. Extensive results show that the proposed priors help PhysWave generate spatially consistent FOA audio while maintaining competitive audio quality. Further analyses show that these physics priors improve spatial consistency during training and can also be used as inference-time guidance for training-free spatial refinement.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container is-max-widescreen overview" aria-labelledby="overview-title">
+      <h2 id="overview-title" class="title is-3 has-text-centered">Overview of PhysWave</h2>
+      <figure class="framework-figure">
+        <img class="framework-image" src="figures/framework.png" alt="Overview of the PhysWave framework, including unified waypoint-text conditioning, the FOA latent diffusion model, and physics-guided constraints.">
+        <figcaption class="framework-caption">PhysWave converts text and spatial descriptions into a unified waypoint–text representation, conditions a latent diffusion model on the resulting tokens, and enforces spherical-harmonic direction consistency and inverse-square distance consistency during training.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container is-max-widescreen examples" aria-labelledby="examples-title">
+      <div class="section-head">
+        <h2 id="examples-title" class="title is-3">Generated Audio Samples with Various Trajectories</h2>
+        <p>For headphone playback, generated FOA signals are rendered into binaural previews using HRTF-based spatial decoding. Each row keeps the audio event fixed and changes only the spatial trajectory. The intermediate waypoint input is shown as (t, azimuth, elevation, distance), with azimuth 0° front, +90° left, -90° right, and ±180° back.</p>
+      </div>
+      <div id="sample-rows"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container is-max-widescreen comparison" aria-labelledby="comparison-title">
+      <div class="section-head">
+        <h2 id="comparison-title" class="title is-3">Comparison with Baselines</h2>
+        <p>Representative prompts are shown with available comparable systems using the same text description.</p>
+      </div>
+      <div id="baseline-rows"></div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="content has-text-centered">
+        <p>Website template borrowed from <a href="https://github.com/nerfies/nerfies.github.io">NeRFies</a>.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="demo_data.js"></script>
+  <script src="baseline_data.js"></script>
+  <script>
+    const ROWS = DEMO_DATA.trajectoryRows;
+    const root = document.getElementById("sample-rows");
+    const baselineRoot = document.getElementById("baseline-rows");
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#039;"
+      }[char]));
+    }
+
+    function titleCase(value) {
+      const labels = {
+        static: "Static",
+        linear: "Linear",
+        approach_recede: "Approach / Recede",
+        circular: "Circular"
+      };
+      return labels[value] || value.replace(/_/g, " ").replace(/\b\w/g, char => char.toUpperCase());
+    }
+
+    function formatNumber(value) {
+      const rounded = Math.round(Number(value) * 100) / 100;
+      return Number.isInteger(rounded) ? rounded.toFixed(0) : rounded.toFixed(2).replace(/0+$/, "").replace(/\.$/, "");
+    }
+
+    function waypointTable(sample) {
+      return `
+        <div class="waypoint-panel">
+          <div class="waypoint-title">
+            <strong>Waypoint input</strong>
+            <span>M=10 · (t, θ, ϕ, r)</span>
+          </div>
+          <div class="waypoint-scroll">
+            <table class="waypoint-table">
+              <thead>
+                <tr>
+                  <th>t(s)</th>
+                  <th>az θ°</th>
+                  <th>el ϕ°</th>
+                  <th>r(m)</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${displayWaypoints(sample).map(point => `
+                  <tr>
+                    <td>${formatNumber(point[0])}</td>
+                    <td>${formatNumber(point[1])}</td>
+                    <td>${formatNumber(point[2])}</td>
+                    <td>${formatNumber(point[3])}</td>
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderCards() {
+      root.innerHTML = ROWS.map((row, rowIndex) => `
+        <section class="event-row">
+          <div class="event-head">
+            <h3>${escapeHtml(row.event)}</h3>
+          </div>
+          <div class="grid">
+            ${row.variants.map((sample, sampleIndex) => `
+              <article class="sample-card" data-row="${rowIndex}" data-index="${sampleIndex}">
+                <div class="canvas-wrap">
+                  <canvas class="trajectory" aria-label="3D synchronized trajectory for ${escapeHtml(sample.id)}"></canvas>
+                  <div class="canvas-legend" aria-hidden="true">
+                    <span><i class="listener-mark">L</i>Listener</span>
+                    <span><i class="dot"></i>Source</span>
+                  </div>
+                  <span class="time-badge" data-readout>t=0.00s</span>
+                </div>
+                <div class="sample-body">
+                  <p class="sample-kicker">${escapeHtml(titleCase(sample.trajectoryKey))}</p>
+                  <p class="prompt"><strong>Prompt:</strong> "${escapeHtml(sample.prompt)}"</p>
+                  ${waypointTable(sample)}
+                  <div class="player-row">
+                    <span>Generated FOA audio <em>(binaural preview)</em></span>
+                    <audio class="sample-audio" controls preload="metadata" src="${escapeHtml(sample.audio)}"></audio>
+                  </div>
+                </div>
+              </article>
+            `).join("")}
+          </div>
+        </section>
+      `).join("");
+    }
+
+    function renderBaselines() {
+      baselineRoot.innerHTML = BASELINE_COMPARISON.items.map(item => `
+        <section class="baseline-row">
+          <div class="baseline-head">
+            <div>
+              <h3>${escapeHtml(item.displayIndex)}. ${escapeHtml(item.eventLabel)} · ${escapeHtml(item.trajectoryLabel || "")}</h3>
+              <p>${escapeHtml(item.caption)}</p>
+            </div>
+          </div>
+          <div class="baseline-grid">
+            ${item.systems.map(system => `
+              <article class="baseline-card ${system.label === "PhysWave" ? "is-physwave" : ""}">
+                <h4>${escapeHtml(system.label)}</h4>
+                <audio controls preload="metadata" src="${escapeHtml(system.audio)}"></audio>
+              </article>
+            `).join("")}
+          </div>
+        </section>
+      `).join("");
+    }
+
+
+    function clamp(value, lo, hi) {
+      return Math.max(lo, Math.min(hi, value));
+    }
+
+    function lerp(a, b, t) {
+      return a + (b - a) * t;
+    }
+
+    function angleLerp(a, b, t) {
+      const delta = ((b - a + 540) % 360) - 180;
+      return a + delta * t;
+    }
+
+    function interpolateWaypoint(points, time) {
+      if (!points.length) return [0, 0, 0, 1];
+      if (time <= points[0][0]) return points[0].slice();
+      for (let i = 0; i < points.length - 1; i++) {
+        const p = points[i];
+        const q = points[i + 1];
+        if (time <= q[0]) {
+          const r = (time - p[0]) / Math.max(1e-6, q[0] - p[0]);
+          return [time, angleLerp(p[1], q[1], r), lerp(p[2], q[2], r), lerp(p[3], q[3], r)];
+        }
+      }
+      return points[points.length - 1].slice();
+    }
+
+    function displayWaypoints(sample, count = 10) {
+      const maxTime = sample.waypoints[sample.waypoints.length - 1][0] || 10;
+      return Array.from({length: count}, (_, index) => {
+        const time = (maxTime * index) / Math.max(1, count - 1);
+        const point = interpolateWaypoint(sample.waypoints, time);
+        point[0] = time;
+        return point;
+      });
+    }
+
+    function sphToCart(azDeg, elDeg, dist) {
+      const az = azDeg * Math.PI / 180;
+      const el = elDeg * Math.PI / 180;
+      const flat = dist * Math.cos(el);
+      return {
+        x: flat * Math.sin(az),
+        y: flat * Math.cos(az),
+        z: dist * Math.sin(el)
+      };
+    }
+
+    function interpolateCartesianCart(points, time) {
+      if (!points.length) return {x: 0, y: 0, z: 0};
+      const first = points[0];
+      if (time <= first[0]) return sphToCart(first[1], first[2], first[3]);
+      for (let i = 0; i < points.length - 1; i++) {
+        const p = points[i];
+        const q = points[i + 1];
+        if (time <= q[0]) {
+          const r = (time - p[0]) / Math.max(1e-6, q[0] - p[0]);
+          const a = sphToCart(p[1], p[2], p[3]);
+          const b = sphToCart(q[1], q[2], q[3]);
+          return {
+            x: lerp(a.x, b.x, r),
+            y: lerp(a.y, b.y, r),
+            z: lerp(a.z, b.z, r)
+          };
+        }
+      }
+      const last = points[points.length - 1];
+      return sphToCart(last[1], last[2], last[3]);
+    }
+
+    function sampleTime(sample, audio) {
+      const maxTime = sample.waypoints[sample.waypoints.length - 1][0] || 10;
+      if (Number.isFinite(audio.duration) && audio.duration > 0) {
+        return clamp((audio.currentTime / audio.duration) * maxTime, 0, maxTime);
+      }
+      return clamp(audio.currentTime || 0, 0, maxTime);
+    }
+
+    function denseWaypoints(sample, count = 260) {
+      const maxTime = sample.waypoints[sample.waypoints.length - 1][0] || 10;
+      const points = [];
+      for (let i = 0; i <= count; i++) {
+        points.push(interpolateWaypoint(sample.waypoints, (maxTime * i) / count));
+      }
+      return points;
+    }
+
+    function denseTrajectory(sample, count = 260) {
+      const maxTime = sample.waypoints[sample.waypoints.length - 1][0] || 10;
+      const points = [];
+      for (let i = 0; i <= count; i++) {
+        const time = (maxTime * i) / count;
+        const cart = sample.trajectoryKey === "linear"
+          ? interpolateCartesianCart(sample.waypoints, time)
+          : sphToCart(...interpolateWaypoint(sample.waypoints, time).slice(1));
+        points.push({time, cart});
+      }
+      return points;
+    }
+
+    function project(cart, layout) {
+      const x = layout.cx + (-cart.x + cart.y * 0.46) * layout.scale;
+      const y = layout.cy + (-cart.x * 0.14 - cart.y * 0.55 - cart.z * 1.22) * layout.scale;
+      return [x, y];
+    }
+
+    function drawLine(ctx, points, color, width, dash = []) {
+      if (points.length < 2) return;
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.setLineDash(dash);
+      ctx.beginPath();
+      points.forEach(([x, y], index) => index ? ctx.lineTo(x, y) : ctx.moveTo(x, y));
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawDot(ctx, xy, color, radius, stroke = "#fff") {
+      ctx.save();
+      ctx.fillStyle = color;
+      ctx.strokeStyle = stroke;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(xy[0], xy[1], radius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawListenerMark(ctx, layout) {
+      const center = project({x: 0, y: 0, z: 0}, layout);
+      ctx.save();
+      ctx.fillStyle = "#171a1f";
+      ctx.beginPath();
+      ctx.arc(center[0], center[1], 8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#fff";
+      ctx.font = "bold 9px Arial, sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("L", center[0], center[1] + 0.5);
+      ctx.restore();
+    }
+
+    function drawGrid(ctx, layout, maxRadius) {
+      ctx.save();
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = "rgba(126, 141, 155, .25)";
+      ctx.fillStyle = "#65717d";
+      ctx.font = "11px Inter, system-ui, sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+
+      for (let r = 1; r <= 4; r++) {
+        const radius = (maxRadius * r) / 4;
+        const ring = [];
+        for (let i = 0; i <= 96; i++) {
+          const a = (i / 96) * Math.PI * 2;
+          ring.push(project({x: Math.sin(a) * radius, y: Math.cos(a) * radius, z: 0}, layout));
+        }
+        drawLine(ctx, ring, "rgba(126, 141, 155, .28)", 1);
+      }
+
+      const axes = [
+        [{x: 0, y: 0, z: 0}, {x: 0, y: maxRadius, z: 0}, "front", "#315f86"],
+        [{x: 0, y: 0, z: 0}, {x: 0, y: -maxRadius, z: 0}, "back", "#315f86"],
+        [{x: 0, y: 0, z: 0}, {x: maxRadius, y: 0, z: 0}, "left", "#2d7965"],
+        [{x: 0, y: 0, z: 0}, {x: -maxRadius, y: 0, z: 0}, "right", "#2d7965"],
+        [{x: 0, y: 0, z: 0}, {x: 0, y: 0, z: maxRadius * 0.62}, "up", "#8a5c9f"]
+      ];
+
+      for (const [a, b, label, color] of axes) {
+        const start = project(a, layout);
+        const end = project(b, layout);
+        drawLine(ctx, [start, end], color, 1.8);
+        ctx.fillStyle = color;
+        ctx.fillText(label, end[0], end[1] - 12);
+      }
+
+      drawListenerMark(ctx, layout);
+      ctx.restore();
+    }
+
+    function drawTimeline(ctx, sample, time, width, height) {
+      const x0 = 18;
+      const x1 = width - 18;
+      const y = height - 34;
+      const maxTime = sample.waypoints[sample.waypoints.length - 1][0] || 10;
+      const progress = clamp(time / maxTime, 0, 1);
+
+      ctx.save();
+      ctx.lineCap = "round";
+      ctx.strokeStyle = "rgba(126, 141, 155, .35)";
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.moveTo(x0, y);
+      ctx.lineTo(x1, y);
+      ctx.stroke();
+
+      ctx.strokeStyle = "#d0772e";
+      ctx.beginPath();
+      ctx.moveTo(x0, y);
+      ctx.lineTo(x0 + (x1 - x0) * progress, y);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawSample(card) {
+      const row = ROWS[Number(card.dataset.row)];
+      const sample = row.variants[Number(card.dataset.index)];
+      const canvas = card.querySelector("canvas.trajectory");
+      const audio = card.querySelector("audio");
+      const readout = card.querySelector("[data-readout]");
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      const width = Math.max(280, Math.floor(rect.width));
+      const height = Math.max(190, Math.floor(rect.height));
+
+      if (canvas.width !== Math.floor(width * dpr) || canvas.height !== Math.floor(height * dpr)) {
+        canvas.width = Math.floor(width * dpr);
+        canvas.height = Math.floor(height * dpr);
+      }
+
+      const ctx = canvas.getContext("2d");
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, width, height);
+
+      const dense = denseTrajectory(sample);
+      const carts = dense.map(point => point.cart);
+      const maxRadius = Math.max(1.2, ...carts.map(c => Math.hypot(c.x, c.y)), ...carts.map(c => Math.abs(c.z) * 1.45));
+      const layout = {
+        cx: width * 0.5,
+        cy: height * 0.48,
+        scale: Math.min(width * 0.32, height * 0.28) / maxRadius
+      };
+
+      const time = sampleTime(sample, audio);
+      const curCart = sample.trajectoryKey === "linear"
+        ? interpolateCartesianCart(sample.waypoints, time)
+        : sphToCart(...interpolateWaypoint(sample.waypoints, time).slice(1));
+      const curPoint = project(curCart, layout);
+      const floorPoint = project({x: curCart.x, y: curCart.y, z: 0}, layout);
+      const path = carts.map(cart => project(cart, layout));
+      const floorPath = carts.map(cart => project({x: cart.x, y: cart.y, z: 0}, layout));
+      const elapsedPath = dense
+        .filter(point => point.time <= time)
+        .map(point => project(point.cart, layout));
+
+      drawGrid(ctx, layout, maxRadius);
+      drawLine(ctx, floorPath, "rgba(49, 95, 134, .25)", 2, [5, 6]);
+      drawLine(ctx, path, "rgba(49, 95, 134, .55)", 5);
+      drawLine(ctx, path, "#315f86", 2.5);
+      drawLine(ctx, elapsedPath, "#d0772e", 4);
+
+      const start = sample.waypoints[0];
+      const end = sample.waypoints[sample.waypoints.length - 1];
+      drawDot(ctx, project(sphToCart(start[1], start[2], start[3]), layout), "#2f7a63", 5);
+      drawDot(ctx, project(sphToCart(end[1], end[2], end[3]), layout), "#6f7a84", 4);
+
+      drawLine(ctx, [floorPoint, curPoint], "rgba(208, 119, 46, .42)", 2);
+      drawDot(ctx, floorPoint, "rgba(208, 119, 46, .30)", 4, "rgba(255,255,255,.72)");
+      drawDot(ctx, curPoint, "#d0772e", 8);
+
+      ctx.save();
+      ctx.strokeStyle = "rgba(208, 119, 46, .22)";
+      ctx.lineWidth = 8;
+      ctx.beginPath();
+      ctx.arc(curPoint[0], curPoint[1], 15, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+
+      drawTimeline(ctx, sample, time, width, height);
+      readout.textContent = `t=${time.toFixed(2)}s`;
+    }
+
+    function drawAll() {
+      document.querySelectorAll(".sample-card").forEach(drawSample);
+    }
+
+    renderCards();
+    renderBaselines();
+
+    document.querySelectorAll("audio").forEach(audio => {
+      ["loadedmetadata", "timeupdate", "seeking", "seeked", "play", "pause", "ended", "error"].forEach(eventName => {
+        audio.addEventListener(eventName, drawAll);
+      });
+    });
+
+    window.addEventListener("resize", drawAll);
+
+    function frame() {
+      drawAll();
+      requestAnimationFrame(frame);
+    }
+
+    requestAnimationFrame(frame);
+  </script>
+</body>
+</html>
