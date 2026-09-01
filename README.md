@@ -5,7 +5,7 @@
 </div>
 
 <div align="center">
-  <img src="https://img.shields.io/badge/Paper-Coming%20Soon-b31b1b?logo=arxiv" alt="Paper coming soon">&nbsp;
+  <a href="https://arxiv.org/abs/2608.29549"><img src="https://img.shields.io/badge/Paper-arXiv-b31b1b?logo=arxiv" alt="Paper"></a>&nbsp;
   <a href="https://lingfengyao.github.io/PhysWave/"><img src="https://img.shields.io/badge/Homepage-Website-05a4a7" alt="Homepage"></a>
 </div>
 
