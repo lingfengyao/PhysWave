@@ -23,7 +23,7 @@ Use an ambisonic decoder for spatial listening.
 
 - [x] Demo audio
 - [x] Inference code
-- [ ] Pretrained checkpoint downloads
+- [x] Pretrained checkpoint downloads
 - [ ] Dataset
 
 ## Setup
@@ -38,8 +38,14 @@ source .venv/bin/activate
 python -m pip install -e .
 ```
 
-Pretrained checkpoint downloads are not yet published. If you already have the
-weights, place them here:
+Download both pretrained checkpoints from [Hugging Face](https://huggingface.co/10wind/PhysWave):
+
+```bash
+python -m pip install huggingface_hub
+hf download 10wind/PhysWave physwave.ckpt vae.ckpt --local-dir checkpoints
+```
+
+The checkpoint directory should contain:
 
 ```text
 checkpoints/
