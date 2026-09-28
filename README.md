@@ -1,12 +1,14 @@
 <div align="center">
 
-# PhysWave: Physics-Guided Spatial Audio Generation with Controllable Latent Diffusion Models
+# PhysWave: Physics-Guided Spatial Audio Generation with Controllable Latent Diffusion Models (EMNLP 2026)
 
 </div>
 
 <div align="center">
   <a href="https://arxiv.org/abs/2608.29549"><img src="https://img.shields.io/badge/Paper-arXiv-b31b1b?logo=arxiv" alt="Paper"></a>&nbsp;
-  <a href="https://lingfengyao.github.io/PhysWave/"><img src="https://img.shields.io/badge/Homepage-Website-05a4a7" alt="Homepage"></a>
+  <a href="https://lingfengyao.github.io/PhysWave/"><img src="https://img.shields.io/badge/Homepage-Website-05a4a7" alt="Homepage"></a>&nbsp;
+  <a href="https://huggingface.co/10wind/PhysWave"><img src="https://img.shields.io/badge/Checkpoints-Hugging_Face-EE4C2C?logo=pytorch&logoColor=white" alt="Checkpoints"></a>&nbsp;
+  <a href="https://huggingface.co/datasets/10wind/PhysWave_dataset"><img src="https://img.shields.io/badge/Dataset-Hugging_Face-ffd21e?logo=huggingface" alt="Dataset"></a>
 </div>
 
 
@@ -16,15 +18,15 @@
 
 PhysWave generates single-source spatial audio from a sound description and trajectory.
 Use a natural-language instruction parsed by an API, or provide waypoints directly.
-Outputs are approximately 10 seconds of 16 kHz first-order ambisonic audio (W, X, Y, Z).
-Use an ambisonic decoder for spatial listening.
+Outputs are approximately 10 seconds of 16 kHz first-order ambisonic (FOA) audio.
+For headphone listening, render the FOA output to binaural audio using an HRTF-based decoder.
 
 ## Release Status
 
 - [x] Demo audio
 - [x] Inference code
-- [x] Pretrained checkpoint downloads
-- [ ] Dataset
+- [x] [Checkpoints](https://huggingface.co/10wind/PhysWave)
+- [x] [Dataset](https://huggingface.co/datasets/10wind/PhysWave_dataset)
 
 ## Setup
 
@@ -125,6 +127,11 @@ python -m physwave --condition examples/snoring_recede.json --output outputs/rec
 ```
 
 Each run saves a WAV and a JSON file with its conditioning and generation settings.
+
+## Dataset
+
+The [PhysWave Dataset](https://huggingface.co/datasets/10wind/PhysWave_dataset) provides
+pre-rendered 16 kHz FOA audio with captions and trajectory waypoints in Parquet format.
 
 ## Citation
 
