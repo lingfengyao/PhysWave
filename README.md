@@ -119,3 +119,16 @@ python -m physwave --condition examples/snoring_recede.json --output outputs/rec
 ```
 
 Each run saves a WAV and a JSON file with its conditioning and generation settings.
+
+## Citation
+
+If you use PhysWave in your research, please cite:
+
+```bibtex
+@inproceedings{yao2026physwave,
+  title     = {{PhysWave}: Physics-Guided Latent Diffusion Models for Controllable Spatial Audio Generation},
+  author    = {Yao, Lingfeng and Huang, Chenpei and Yang, Xingke and Geng, Ziye and Luo, Changqing and Wang, Hao and Liu, Jiang and Pan, Miao},
+  booktitle = {Proceedings of the 2026 Conference on Empirical Methods in Natural Language Processing},
+  year      = {2026}
+}
+```
