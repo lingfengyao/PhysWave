@@ -133,6 +133,12 @@ Each run saves a WAV and a JSON file with its conditioning and generation settin
 The [PhysWave Dataset](https://huggingface.co/datasets/10wind/PhysWave_dataset) provides
 pre-rendered 16 kHz FOA audio with captions and trajectory waypoints in Parquet format.
 
+## License
+
+- The PhysWave code in this repository (`physwave/`, `examples/`) is released under the [Apache License 2.0](LICENSE).
+- `stable_audio_tools/` is a modified subset of Stability AI's [stable-audio-tools](https://github.com/Stability-AI/stable-audio-tools), released under the [MIT License](stable_audio_tools/LICENSE). Third-party notices for code it includes are in [`stable_audio_tools/LICENSES/`](stable_audio_tools/LICENSES).
+- The pretrained checkpoints (`physwave.ckpt`, `vae.ckpt`) and the [PhysWave Dataset](https://huggingface.co/datasets/10wind/PhysWave_dataset) are released under [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/) for research and non-commercial use only. They are trained on and rendered from AudioCaps, WavCaps (FreeSound, BBC Sound Effects and AudioSet-SL subsets), Clotho, ESC-50 and FSD50K, whose terms restrict use to research and non-commercial purposes.
+
 ## Citation
 
 If you use PhysWave in your research, please cite:
