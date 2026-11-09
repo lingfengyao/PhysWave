@@ -1,6 +1,6 @@
 <div align="center">
 
-# PhysWave: Physics-Guided Spatial Audio Generation with Controllable Latent Diffusion Models (EMNLP 2026)
+# PhysWave: Physics-Guided Latent Diffusion Models for Controllable Spatial Audio Generation (EMNLP 2026)
 
 </div>
 
